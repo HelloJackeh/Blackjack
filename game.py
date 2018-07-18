@@ -1,46 +1,31 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jul 13 21:39:42 2018
-"""
-import time
-import shoe
-from player import Player
+import shoe as sh
+import dealer as deal
 
 class Game():
+    """
+    Imagine this as the controller in a MVC pattern.
+    Initializes the shoe, players, and dealer
+    """
     
     def __init__(self, players):
+        self.decks = sh.Shoe(4)
+        self.shuffle_shoe()
+        self.dealer = deal.Dealer(self.decks)
         self.players = list(players)
-        
-        self.deck = shoe.Deck()
-        self.shuffle_deck()
-        
-        self.dealer = Player("Dealer")
-        self.dealer_cards = 0
+        self.confirm_players(self.players)
         
         self.greet_message()
-        self.deal_cards()
         
-    def deal_cards(self):
-        
-        for x in range(2):
-            self.dealer.draw(self.deck)
-            
-        print ("Dealer's face up card: {}".format(self.dealer.last_card_drawn()))
-        
-        for i in range(2):
-            print("Dealing: ", end = "")
-            for j in range(len(self.players)):
-                self.players[j].draw(self.deck)
-                print("{}".format(self.players[j].last_card_drawn()), end = " ")
+    def confirm_players(self, players):
+        self.dealer.add_players(players)
         
     def greet_message(self):
         for i in range(len(self.players)):
             print("Welcome player " + self.players[i].get_name())
         
     def get_current_players(self):
-        for player in self.players:
-            print(player.get_name())
+        for p in self.players:
+            print(p.get_name())
             
     def get_num_of_players(self):
         for count in range(len(self.players)):
@@ -48,29 +33,21 @@ class Game():
             
         print("Number of players: " + str(count))
             
-    def shuffle_deck(self):
-        self.deck.shuffle()
+    #def shuffle_deck(self):
+        #self.deck.shuffle()
+        
+    def shuffle_shoe(self):
+        self.decks.shuffle()
         
     def blackjack_count(self, card_value):
         blackjack = 21
         return blackjack - card_value
-    
-    def dealer_turn(self):        
-        self.dealer_bust = False
-        
-        while (self.dealer_cards <= 17):
-            self.dealer.draw(self.deck)
-            self.dealer_cards = self.dealer_cards + self.dealer.drawn_card_value()
-            time.sleep(2)
-            print("Dealer drew: {}".format(self.dealer.last_card_drawn()))
-            
-        if self.dealer_cards > 21:
-            self.dealer_bust = True
             
     def get_dealer_hand(self):
         return self.dealer_cards
             
     def start_game(self):
+        self.dealer.initial_deal_cards()
         card_value = 0
         
         for i in range(len(self.players)): 
@@ -82,7 +59,7 @@ class Game():
                 player_choice = input("Type 'hit' (to draw), 'stay' (to stay), 'value' (calculate card value in hand). ")
                 
                 if player_choice == "hit":
-                    self.players[i].draw(self.deck)
+                    self.players[i].draw(self.decks)
                     card_value = self.players[i].get_value()
                     blackjack = 21
 

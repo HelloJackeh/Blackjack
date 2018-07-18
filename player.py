@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 16 16:22:45 2018
-
-@author: jackeh
-"""
-
 class Player():
     """
     What can a player do?
@@ -17,9 +9,9 @@ class Player():
     def __init__(self, name):
         self.name = name
         self.hand = []
-        
+    
     def draw(self, deck):
-        self.hand.append(deck.give_card())
+        self.hand.append(deck.get_card())
         #print("Drew {}".format(self.hand[-1].show_card()))
         
     def last_card_drawn(self):

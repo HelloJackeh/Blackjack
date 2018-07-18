@@ -1,18 +1,30 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 16 16:15:17 2018
-
-A shoe (sometimes referred as dealing shoe or dealer's shoe)
-holds multiple decks of cards (from 2-8 decks)
-"""
-
 import random
+
+class Shoe():
+    """
+    A shoe (sometimes referred as 'dealing shoe' or 'dealer's shoe')
+    holds multiple decks of cards, ranging from 2-8 decks
+    """
+    def __init__(self, deck_amount):
+        self.shoe = []
+        self.deck_count = deck_amount
+        self.build_shoe()
+        
+    def build_shoe(self):
+        for i in range(self.deck_count):
+            self.deck = Deck()
+            self.shoe.extend(self.deck.get_deck())
+            
+    def shuffle(self):
+        random.shuffle(self.shoe)
+        
+    def get_card(self):
+        return self.shoe.pop()
+        
 
 class Card():
     # TO-DO: Modify 'A' - Ace to interchange between value of '1' or '11' if the player wants their A to be 1 or 11.
-    card_dict = {'A': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 
-                 'J': 10, 'Q': 10, 'K': 10}
+    card_dict = {'A': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 10, 'Q': 10, 'K': 10}
     
     def __init__(self, value, suit):
         self.value = value
@@ -57,6 +69,9 @@ class Deck():
         
     def give_card(self):
         return self.cards.pop()
+    
+    def get_deck(self):
+        return self.cards
     
     def shuffle(self):
         random.shuffle(self.cards)
