@@ -9,35 +9,48 @@ class Game():
         - Determine the winner at end of round, restart round 
         - Keep track of how many cards are in the shoe
         - Ensures the dealer knows who it's (players) playing with
-        
-        TODO:
-        - Implement function to check if player has BlackJack (natural) in first 2 cards
-        - For those players who has blackjack, or has not busted at end of round,
-        place them in another list so dealer doesn't have to check cards of players who busted
     """
     
-    def __init__(self, players, deck_amount):
+    def __init__(self, players, deck_amount, pen_amount):
         """
-        - Initialize how many decks will be in the shoe.
+        - Pass how many decks will be in the shoe.
         - Ensure dealer knows how many players are playing via 'confirm_player'
         """
-        self.active_play = []
+        # Players who haven't bust are placed in this list so when round is over
+        # dealer will compare cards with players in this list
+        self.active_players = []
         
         self.decks = sh.Shoe(deck_amount)
-        self.shuffle_shoe()
+        self.decks.shuffle()
         self.dealer = dl.Dealer(self.decks)
         
-        self.players = list(players)
+        # create copy of the deck to keep track of the length
+        self.clone = self.decks.shoe.copy()
+        
+        # Holds cards cleared at the end of each round
+        self.trash_pile = []
+        
+        self.players = players
         self.confirm_players(self.players)
+
+        # Average shoe penetration in Blackjack is usually 25% (0.25)
+        self.pen = len(self.decks) * (pen_amount / 100)
+        print ("{} cards are in the shoe after cut.".format(self.remaining_cards()))
         
         self.greet_message()
         
     def confirm_players(self, players):
         self.dealer.add_players(players)
         
+    def remaining_cards(self):
+        return int(len(self.decks) - self.pen)
+        
     def greet_message(self):
         for player in self.players:
             print("Welcome player " + player.get_name())
+            
+    def shoe_count(self):
+        return len(self.decks) - self.pen
         
     def get_current_players(self):
         for pl in self.players:
@@ -45,7 +58,7 @@ class Game():
             
     def get_num_of_players(self):
         for count in range(len(self.players)):
-            count = count + 1
+            count += 1
             
         print("Number of players: " + str(count))
 
@@ -55,31 +68,23 @@ class Game():
         
         for player in self.players:
             player.hand.clear()
-        
-    def shuffle_shoe(self):
-        self.decks.shuffle()
-        
-    def check_blackjack(self, player):
-        
-        if player.get_value() == 21:
-            self.not_out(player)
-            return True
-            
-    def get_dealer_hand(self):
-        return self.dealer.get_hand_value()
     
     def reset(self):
-        self.active_play.clear()
+        self.active_players.clear()
     
     def not_out(self, player):
-        self.active_play.append(player)
+        self.active_players.append(player)
+        
     
     def decide_winner(self):
         dealer_hand = self.dealer.get_hand_value()
         
-        if self.active_play:
-            for player in self.active_play:
-                player_hand = player.get_value()
+        # If active_players list has no players, everyone has busted.
+        if self.active_players:
+            for player in self.active_players:
+                
+                player_hand = player.get_hand_value()
+                
                 if self.dealer.bust or player_hand > dealer_hand:
                     player.win()
                     print("{} wins with {} in their hand.".format(player.name, player_hand))
@@ -91,8 +96,7 @@ class Game():
                     print("{} ties with {} in their hand.".format(player.name, player_hand))
         else:
             print("Everyone busted.")
-            
-            
+        
     def start_game(self):
         self.dealer.initial_deal_cards()
         card_value = 0
@@ -100,19 +104,20 @@ class Game():
         for player in self.players: 
             player_choice = None
             
-            if self.check_blackjack(player):
+            if player.has_blackjack():
+                self.not_out(player)
                 continue
             
-            print("\n\n {}'s turn.".format(player.name))
+            print("\n\n{}'s turn.".format(player.name))
             player.show_hand()
             
             while (player_choice != "stay"):
-                card_value = player.get_value()
                 player_choice = input("Type 'hit' (to draw), 'stay' (to stay), 'value' (calculate card value in hand). ")
                 
                 if player_choice == "hit":
                     player.draw(self.decks)
-                    card_value = player.get_value()
+                    
+                    card_value = player.get_hand_value()
 
                     print("Drew {}".format(player.last_card_drawn()))
                     print("Your hand's value is {}".format(card_value))
@@ -127,7 +132,6 @@ class Game():
                         player_choice = "stay"
                     else:
                         print("You busted.")
-                        player.bust(True)
                         player.lose()
                         player_choice = "stay"
                         
@@ -144,20 +148,20 @@ class Game():
         self.dealer.dealer_turn()
         self.dealer.show_hand()
         
-        print("\nDealer's hand count: {}".format(self.get_dealer_hand()))
+        print("\nDealer's hand count: {}".format(self.dealer.get_hand_value()))
         # print("{}'s hand count: {}".format(self.players[0].get_name(), card_value))
         
         self.decide_winner()            
         self.clear_cards()
         self.reset()
         
-        print(self.decks.remaining())
+        print("\n{} cards remaining in the shoe.".format(self.remaining_cards()))
             
 if __name__ == '__main__':                
     p1 = p.Player("bob")
     p2 = p.Player("joe")
     list_player = [p1, p2]
-    g = Game(list_player, 4)
+    g = Game(list_player, 6, 25)
     #g.get_current_players()
     #g.get_num_of_players()
     g.start_game()

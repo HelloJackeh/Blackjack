@@ -6,15 +6,21 @@ class Shoe():
     holds multiple decks of cards, ranging from 1-8 decks
     """
     def __init__(self, deck_amount):
+        
         self.shoe = []
         self.deck_amount = deck_amount
         self.build_shoe()
         
+    def __len__(self):
+        return len(self.shoe)
+        
     def build_shoe(self):
+        # shuffles each deck before adding it to the shoe
         for i in range(self.deck_amount):
-            self.deck = Deck()
-            self.shoe.extend(self.deck.get_deck())
-            
+            deck = Deck()
+            deck.shuffle()
+            self.shoe.extend(deck.get_deck())
+    
     def remaining(self):
         return "\n" + str(len(self.shoe)) + " cards remaining in the shoe."
             
@@ -24,8 +30,12 @@ class Shoe():
     def deal_card(self):
         return self.shoe.pop()
     
-
 class Deck():
+    """
+    A deck HAS 52 cards, with numbered cards designating their values from 2-10,
+    with face cards: 'J', 'Q', 'K' having a value of 10, and a special card 'A',
+    has value of 1 or 11 depending on the player's hand.
+    """
     
     def __init__(self):
         """
@@ -41,7 +51,7 @@ class Deck():
         heart = "\u2665"
         
         self.cards = []
-        values = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K']
+        values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
         
         for suits in [spade, diamond, heart, club]:
             for value in values:
@@ -64,19 +74,19 @@ class Deck():
             print(card.show())
     
 class Card():
-    # TO-DO: Modify 'A' - Ace to interchange between value of '1' or '11' if the player wants their A to be 1 or 11.
     card_dict = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 
                  '10': 10, 'J': 10, 'Q': 10, 'K': 10, 'A': 11}
     
-    def __init__(self, value, suit):
-        self.value = value
+    def __init__(self, values, suit):
+        self.name = values
+        self.value = self.card_dict[str(values)]
         self.suit = suit
 
     def show_card(self):
-        return ("[{} {}]".format(self.suit, self.value))
+        return ("[{} {}]".format(self.suit, self.name))
         
     def show(self):
-        print ("[{} {}]".format(self.suit, self.value), end = " ")
+        print ("[{} {}]".format(self.suit, self.name), end = " ")
         
     def get_value(self):
         return self.value

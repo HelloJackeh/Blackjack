@@ -1,3 +1,5 @@
+import ace
+
 class Player():
     """
     What can a player do?
@@ -11,18 +13,26 @@ class Player():
     def __init__(self, name):
         self.name = name
         self.hand = []
-        self.busted = None
-        self.has_blackjack = False
+        self.ace = []
         
+        self.blackjack = False
+        self.ace = False
+        
+        self.strategy = None
+
         self.win_count = 0
         self.lose_count = 0
         self.tie_count = 0
         
-    def got_blackjack(self):
-        self.has_blackjack = True
+        
+    def has_blackjack(self):
+        return self.blackjack
     
     def bust(self, status):
-        self.busted = status
+        self.bust = status
+        
+    def has_ace(self):
+        return self.ace
         
     def win(self):
         self.win_count += 1
@@ -32,22 +42,21 @@ class Player():
         
     def tie(self):
         self.tie_count += 1
-
-    def is_bust(self):
-        return self.busted
     
     def draw(self, deck):
         self.hand.append(deck.deal_card())
+        ace.check_sub_ace(self)
+        ace.ace(self)
         #print("Drew {}".format(self.hand[-1].show_card()))
         
     def last_card_drawn(self):
-        return self.hand[-1].show_card()
+        return self.last_card().show_card()
     
     def last_card(self):
         return self.hand[-1]
     
     def drawn_card_value(self):
-        return self.last_card().card_dict[str(self.hand[-1].get_value())]
+        return self.last_card().value
 
     def get_name(self):
         return self.name
@@ -58,14 +67,14 @@ class Player():
 
     def value(self):
         value = 0
-        for c in self.hand:
-            value = value + c.card_dict[str(c.get_value())]
+        for card in self.hand:
+            value = value + card.value
         
         print("Your hand's value is: " + str(value))
         
-    def get_value(self):
+    def get_hand_value(self):
         value = 0
-        for c in self.hand:
-            value = value + c.card_dict[str(c.get_value())]
+        for card in self.hand:
+            value += card.value
             
         return value
