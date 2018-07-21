@@ -77,9 +77,9 @@ class Card():
     card_dict = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 
                  '10': 10, 'J': 10, 'Q': 10, 'K': 10, 'A': 11}
     
-    def __init__(self, values, suit):
-        self.name = values
-        self.value = self.card_dict[str(values)]
+    def __init__(self, value, suit):
+        self.name = value
+        self.value = self.card_dict[str(value)]
         self.suit = suit
 
     def show_card(self):

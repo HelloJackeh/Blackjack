@@ -16,22 +16,20 @@ class Game():
         - Pass how many decks will be in the shoe.
         - Ensure dealer knows how many players are playing via 'confirm_player'
         """
-        # Players who haven't bust are placed in this list so when round is over
-        # dealer will compare cards with players in this list
-        self.active_players = []
-        
         self.decks = sh.Shoe(deck_amount)
         self.decks.shuffle()
+        
         self.dealer = dl.Dealer(self.decks)
         
-        # create copy of the deck to keep track of the length
-        self.clone = self.decks.shoe.copy()
+        self.players = players
+        self.confirm_players(self.players)
         
         # Holds cards cleared at the end of each round
         self.trash_pile = []
         
-        self.players = players
-        self.confirm_players(self.players)
+        # Players who haven't bust are placed in this list so when round is over
+        # dealer will compare cards with players in this list
+        self.active_players = []
 
         # Average shoe penetration in Blackjack is usually 25% (0.25)
         self.pen = len(self.decks) * (pen_amount / 100)
@@ -47,7 +45,7 @@ class Game():
         
     def greet_message(self):
         for player in self.players:
-            print("Welcome player " + player.get_name())
+            print("Welcome player " + player.name)
             
     def shoe_count(self):
         return len(self.decks) - self.pen
@@ -68,6 +66,7 @@ class Game():
         
         for player in self.players:
             player.hand.clear()
+            player.reset_ace()
     
     def reset(self):
         self.active_players.clear()
@@ -99,12 +98,11 @@ class Game():
         
     def start_game(self):
         self.dealer.initial_deal_cards()
-        card_value = 0
         
         for player in self.players: 
             player_choice = None
             
-            if player.has_blackjack():
+            if player.has_blackjack:
                 self.not_out(player)
                 continue
             

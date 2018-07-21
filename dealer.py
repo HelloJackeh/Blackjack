@@ -1,6 +1,5 @@
 from time import sleep
 import player as p
-import ace
 
 class Dealer(p.Player):
     """
@@ -34,23 +33,21 @@ class Dealer(p.Player):
         
                 if i == 1:
                     if player.get_hand_value() == 21:
-                        player.blackjack = True
+                        player.has_blackjack = True
                     else:
-                        ace.check_initial_ace(player)
-                        player.blackjack = False
+                        player.has_blackjack = False
             
             if i == 1:
                 if self.get_hand_value() == 21:
-                    self.has_blackjack()
+                    self.has_blackjack = True
                 else:
-                    ace.check_initial_ace(self)
-                    self.blackjack = False
+                    self.has_blackjack = False
                     
         print ("Dealer's face up card: {}".format(self.hand[0].show_card()))
     
     def dealer_turn(self):     
         dealer_cards = self.get_hand_value()
-        self.bust = False
+        self.bust = None
         
         # Stand on 17
         while (dealer_cards < 17):

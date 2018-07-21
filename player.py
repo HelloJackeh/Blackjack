@@ -11,11 +11,11 @@ class Player():
     - Possibly analyze their chances of winning (via counting cards?, possibly something on TO-DO)
     """
     def __init__(self, name):
-        self.name = name
+        self.a = ace.Ace()
+        self._name = name
         self.hand = []
-        self.ace = []
         
-        self.blackjack = False
+        self._blackjack = False
         self.ace = False
         
         self.strategy = None
@@ -24,9 +24,20 @@ class Player():
         self.lose_count = 0
         self.tie_count = 0
         
+    @property
+    def name(self):
+        return self._name
         
+    @property
     def has_blackjack(self):
-        return self.blackjack
+        return self._blackjack
+    
+    @has_blackjack.setter
+    def has_blackjack(self, bj):
+        if (bj is True or bj is False):
+            self._blackjack = bj
+        else:
+            print("Can only set blackjack status to True or False")
     
     def bust(self, status):
         self.bust = status
@@ -44,10 +55,13 @@ class Player():
         self.tie_count += 1
     
     def draw(self, deck):
+        """
+        Each card drawn will be checked if it's an ace.
+        """
         self.hand.append(deck.deal_card())
-        ace.check_sub_ace(self)
-        ace.ace(self)
-        #print("Drew {}".format(self.hand[-1].show_card()))
+        
+        self.a.check_card_drawn(self)
+        self.a.check_ace(self)
         
     def last_card_drawn(self):
         return self.last_card().show_card()
@@ -64,7 +78,10 @@ class Player():
     def show_hand(self):
         for card in self.hand:
             card.show()
-
+            
+    def reset_ace(self):
+        self.a.reset(self)
+        
     def value(self):
         value = 0
         for card in self.hand:
