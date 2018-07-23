@@ -1,7 +1,7 @@
 from time import sleep
-import player as p
+import player as pl
 
-class Dealer(p.Player):
+class Dealer(pl.Player):
     """
     Technically, a dealer IS a player but with extra responsibilities, it can do everything a player can do.
     The dealer's responsibilities?
@@ -12,13 +12,15 @@ class Dealer(p.Player):
     def __init__(self, deck):
         #self.game_status = True
         super().__init__("Dealer")
+        
+        self.strategy = None
         self.deck = deck
         
     def add_players(self, players):
         # Dealer needs to know who the players are so it can interact with it
         self.players = players
 
-    def initial_deal_cards(self):
+    def deal_cards(self):
         print("\nDealing: ")
         
         """
@@ -50,11 +52,11 @@ class Dealer(p.Player):
         self.bust = None
         
         # Stand on 17
-        while (dealer_cards < 17):
+        while (self.get_hand_value() < 17):
             self.draw(self.deck)
-            dealer_cards += self.drawn_card_value()
+            #dealer_cards += self.drawn_card_value()
             sleep(2) # mimics delay of actual card drawing
-            print("Dealer drew: {}".format(self.last_card().show_card()))
+            print("Dealer drew: {}".format(self.last_card.show_card()))
             
         if dealer_cards > 21:
             self.bust = True

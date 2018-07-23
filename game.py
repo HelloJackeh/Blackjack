@@ -1,6 +1,7 @@
 import shoe as sh
 import dealer as dl
 import player as p
+import bot
 
 class Game():
     """
@@ -26,10 +27,6 @@ class Game():
         
         # Holds cards cleared at the end of each round
         self.trash_pile = []
-        
-        # Players who haven't bust are placed in this list so when round is over
-        # dealer will compare cards with players in this list
-        self.active_players = []
 
         # Average shoe penetration in Blackjack is usually 25% (0.25)
         self.pen = len(self.decks) * (pen_amount / 100)
@@ -74,7 +71,6 @@ class Game():
     def not_out(self, player):
         self.active_players.append(player)
         
-    
     def decide_winner(self):
         dealer_hand = self.dealer.get_hand_value()
         
@@ -97,7 +93,11 @@ class Game():
             print("Everyone busted.")
         
     def start_game(self):
-        self.dealer.initial_deal_cards()
+        # Players who haven't bust are placed in this list so when round is over
+        # dealer will compare cards with players in this list
+        self.active_players = []
+        
+        self.dealer.deal_cards()
         
         for player in self.players: 
             player_choice = None
@@ -154,15 +154,24 @@ class Game():
         self.reset()
         
         print("\n{} cards remaining in the shoe.".format(self.remaining_cards()))
-            
-if __name__ == '__main__':                
-    p1 = p.Player("bob")
-    p2 = p.Player("joe")
-    list_player = [p1, p2]
-    g = Game(list_player, 6, 25)
-    #g.get_current_players()
-    #g.get_num_of_players()
+      
+def main():
+    list_of_players = []
+    choice = input("how many players? ")
+    
+    for i in choice:
+        list_of_players.append(p.Player(str(i)))
+        
+    choice = input("How many bots? ")
+    
+    for k in choice:
+        list_of_players.append(bot.Bot())
+        
+    g = Game(list_of_players, 6, 25)
     g.start_game()
     
     while(input("play again? n to exit. ") != "n"):
-        g.start_game()
+        g.start_game()      
+        
+if __name__ == '__main__':                
+    main()

@@ -11,15 +11,13 @@ class Player():
     - Possibly analyze their chances of winning (via counting cards?, possibly something on TO-DO)
     """
     def __init__(self, name):
-        self.a = ace.Ace()
         self._name = name
         self.hand = []
+        self.a = ace.Ace()
         
         self._blackjack = False
         self.ace = False
         
-        self.strategy = None
-
         self.win_count = 0
         self.lose_count = 0
         self.tie_count = 0
@@ -64,13 +62,14 @@ class Player():
         self.a.check_ace(self)
         
     def last_card_drawn(self):
-        return self.last_card().show_card()
+        return self.last_card.show_card()
     
+    @property
     def last_card(self):
         return self.hand[-1]
     
     def drawn_card_value(self):
-        return self.last_card().value
+        return self.last_card.value
 
     def get_name(self):
         return self.name
