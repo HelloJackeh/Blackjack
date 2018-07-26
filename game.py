@@ -1,6 +1,6 @@
 import shoe as sh
 import dealer as dl
-import player as p
+import player as pl
 import bot
 
 class Game():
@@ -10,6 +10,7 @@ class Game():
         - Determine the winner at end of round, restart round 
         - Keep track of how many cards are in the shoe
         - Ensures the dealer knows who it's (players) playing with
+        - Pay out bets
     """
     
     def __init__(self, players, deck_amount, pen_amount):
@@ -37,8 +38,18 @@ class Game():
     def confirm_players(self, players):
         self.dealer.add_players(players)
         
+    
+    """
+    Build shoe either with new decks or append the trash pile and shuffle
+    """
+    #def shuffle_shoe(self):
+        
     def remaining_cards(self):
         return int(len(self.decks) - self.pen)
+    
+    def payroll_amount(self, amount):
+        for player in self.players:
+            player.bankroll = amount
         
     def greet_message(self):
         for player in self.players:
@@ -48,25 +59,30 @@ class Game():
         return len(self.decks) - self.pen
         
     def get_current_players(self):
-        for pl in self.players:
-            print(pl.get_name())
+        for player in self.players:
+            print(player.get_name())
             
     def get_num_of_players(self):
         for count in range(len(self.players)):
             count += 1
             
         print("Number of players: " + str(count))
-
-    def clear_cards(self):
-        # Discard cards from dealer and players at end of the round
-        self.dealer.hand.clear()
         
-        for player in self.players:
-            player.hand.clear()
-            player.reset_ace()
+    def clear_cards(self, player):
+        for cards in player.hand:
+            self.trash_pile.append(cards.pop())
     
     def reset(self):
+        # handles clean up of player cards and removal of players in active_players list
         self.active_players.clear()
+        
+        # Discard cards from dealer and players at end of the round into trash_pile
+        self.clear_cards(self.dealer)
+        self.dealer.reset_ace()
+        
+        for player in self.players:
+            self.clear_cards(player)
+            player.reset_ace()
     
     def not_out(self, player):
         self.active_players.append(player)
@@ -150,17 +166,20 @@ class Game():
         # print("{}'s hand count: {}".format(self.players[0].get_name(), card_value))
         
         self.decide_winner()            
-        self.clear_cards()
         self.reset()
         
         print("\n{} cards remaining in the shoe.".format(self.remaining_cards()))
+        
+    def post_round(self):
+        if self.remaining_cards() < 0:
+            self.shuffle_shoe()
       
 def main():
     list_of_players = []
     choice = input("how many players? ")
     
     for i in choice:
-        list_of_players.append(p.Player(str(i)))
+        list_of_players.append(pl.Player(str(i)))
         
     choice = input("How many bots? ")
     
@@ -168,6 +187,7 @@ def main():
         list_of_players.append(bot.Bot())
         
     g = Game(list_of_players, 6, 25)
+    g.payroll_amount(300)
     g.start_game()
     
     while(input("play again? n to exit. ") != "n"):

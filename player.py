@@ -4,7 +4,6 @@ class Player():
     """
     What can a player do?
     - Can draw cards from deck
-    - Can return it's name
     - Show their hand
     - Get the value of cards in their hands
     - Can track it's wins and losses (TO-DO: incorpoate this with data analysis?)
@@ -14,13 +13,14 @@ class Player():
         self._name = name
         self.hand = []
         self.a = ace.Ace()
+        self.hand_value = 0
         
         self._blackjack = False
         self.ace = False
         
-        self.win_count = 0
-        self.lose_count = 0
-        self.tie_count = 0
+        self._win = 0
+        self._lose = 0
+        self._tie = 0
         
     @property
     def name(self):
@@ -35,28 +35,43 @@ class Player():
         if (bj is True or bj is False):
             self._blackjack = bj
         else:
-            print("Can only set blackjack status to True or False")
+            print("Can only set blackjack status to True or False.")
     
     def bust(self, status):
-        self.bust = status
+        if (status is True or status is False):
+            self.bust = status
+        else:
+            print("bust value can only be True or False.")
         
     def has_ace(self):
         return self.ace
-        
+    
+    @property
+    def bankroll(self):
+        return self._bankroll
+    
+    @bankroll.setter
+    def bankroll(self, amount):
+        self._bankroll = amount
+    
+    @property
     def win(self):
-        self.win_count += 1
+        self._win += 1
         
+    @property
     def lose(self):
-        self.lose_count += 1
+        self._lose += 1
         
+    @property
     def tie(self):
-        self.tie_count += 1
+        self._tie += 1
     
     def draw(self, deck):
         """
         Each card drawn will be checked if it's an ace.
         """
         self.hand.append(deck.deal_card())
+        self.hand_value += self.drawn_card_value()
         
         self.a.check_card_drawn(self)
         self.a.check_ace(self)
@@ -78,8 +93,9 @@ class Player():
         for card in self.hand:
             card.show()
             
-    def reset_ace(self):
+    def reset_hand(self):
         self.a.reset(self)
+        self.hand_value = 0
         
     def value(self):
         value = 0
@@ -89,8 +105,7 @@ class Player():
         print("Your hand's value is: " + str(value))
         
     def get_hand_value(self):
-        value = 0
         for card in self.hand:
-            value += card.value
+            self.value += card.value
             
-        return value
+        return self.value

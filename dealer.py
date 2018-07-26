@@ -60,3 +60,5 @@ class Dealer(pl.Player):
             
         if dealer_cards > 21:
             self.bust = True
+            
+    

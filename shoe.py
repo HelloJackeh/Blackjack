@@ -4,6 +4,8 @@ class Shoe():
     """
     A shoe (sometimes referred as 'dealing shoe' or 'dealer's shoe')
     holds multiple decks of cards, ranging from 1-8 decks
+    In Blackjack, not all cards get dealt so a shoe penetration (blank card) is placed
+    at a point in the deck where the dealer will only deal up to that, then shoe'll be shuffled.
     """
     def __init__(self, deck_amount):
         
