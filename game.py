@@ -1,10 +1,6 @@
 import shoe as sh
 import dealer as dl
 import player as pl
-<<<<<<< HEAD
-=======
-import bot
->>>>>>> origin/master
 
 class Game():
     """
@@ -49,12 +45,6 @@ class Game():
     """
     #def shuffle_shoe(self):
         
-    
-    """
-    Build shoe either with new decks or append the trash pile and shuffle
-    """
-    #def shuffle_shoe(self):
-        
     def remaining_cards(self):
         return int(len(self.decks) - self.pen)
     
@@ -80,12 +70,9 @@ class Game():
         print("Number of players: " + str(count))
         
     def clear_cards(self, player):
-<<<<<<< HEAD
         for i in range(len(player.hand)):
             self.trash_pile.append(player.hand.pop())
 
-=======
->>>>>>> origin/master
         for cards in player.hand:
             self.trash_pile.append(cards.pop())
     
@@ -95,15 +82,12 @@ class Game():
         
         # Discard cards from dealer and players at end of the round into trash_pile
         self.clear_cards(self.dealer)
-<<<<<<< HEAD
         self.dealer.reset_hand()
         
         for player in self.players:
             self.clear_cards(player)
             player.reset_hand()
 
-=======
->>>>>>> origin/master
         self.dealer.reset_ace()
         
         for player in self.players:
@@ -283,7 +267,6 @@ def main():
     decks = 8
     shoe_penetration = 25 # 25%
     
-<<<<<<< HEAD
     list_of_players = []
     name = "Player "
 
@@ -293,19 +276,6 @@ def main():
     g = Game(list_of_players, decks, shoe_penetration)
     g.payroll_amount(300)
     g.decision_round()
-=======
-    for i in choice:
-        list_of_players.append(pl.Player(str(i)))
-        
-    choice = input("How many bots? ")
-    
-    for k in choice:
-        list_of_players.append(bot.Bot())
-        
-    g = Game(list_of_players, 6, 25)
-    g.payroll_amount(300)
-    g.start_game()
->>>>>>> origin/master
     
     while(input("play again? n to exit. ") != "n"):
         g.decision_round()

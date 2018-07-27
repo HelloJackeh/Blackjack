@@ -25,15 +25,9 @@ class Ace():
             """
             Reduce player's hand value by 10 if their hand exceeds 21 if they hold an ace,
             this effectively reduces the ace's value from 11 to 1.
-<<<<<<< HEAD
             """
             if self.aces:
                 player.hand_value -= 10
-=======
-            
-            """
-            if self.ace_index:
->>>>>>> origin/master
                 player.value -= 10
                 self.aces.pop()
             else:
