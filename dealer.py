@@ -10,7 +10,6 @@ class Dealer(pl.Player):
     - Analyze chances of winning via statistical and probability analysis (TO-DO)
     """
     def __init__(self, deck):
-        #self.game_status = True
         super().__init__("Dealer")
         
         self.strategy = None
@@ -22,41 +21,24 @@ class Dealer(pl.Player):
 
     def deal_cards(self):
         print("\nDealing: ")
-        
-        """
-        On the second card dealt, check if players and/or dealer has blackjack
-        """
+
         for i in range(2):
             self.draw(self.deck)
             
             for player in self.players:
                 player.draw(self.deck)
                 print("{} received {}".format(player.name, player.last_card_drawn()))
-        
-                if i == 1:
-                    if player.get_hand_value() == 21:
-                        player.has_blackjack = True
-                    else:
-                        player.has_blackjack = False
-            
-            if i == 1:
-                if self.get_hand_value() == 21:
-                    self.has_blackjack = True
-                else:
-                    self.has_blackjack = False
                     
         print ("Dealer's face up card: {}".format(self.hand[0].show_card()))
     
-    def dealer_turn(self):     
-        dealer_cards = self.get_hand_value()
+    def dealer_turn(self):
         self.bust = None
         
         # Stand on 17
-        while (self.get_hand_value() < 17):
+        while self.hand_value < 17 and not self.has_blackjack:
             self.draw(self.deck)
-            #dealer_cards += self.drawn_card_value()
             sleep(2) # mimics delay of actual card drawing
             print("Dealer drew: {}".format(self.last_card.show_card()))
-            
-        if dealer_cards > 21:
+
+        if self.hand_value > 21:
             self.bust = True

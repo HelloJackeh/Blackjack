@@ -4,6 +4,8 @@ class Shoe():
     """
     A shoe (sometimes referred as 'dealing shoe' or 'dealer's shoe')
     holds multiple decks of cards, ranging from 1-8 decks
+    In Blackjack, not all cards get dealt so a shoe penetration (blank card) is placed
+    at a point in the deck where the dealer will only deal up to that, then shoe'll be shuffled.
     """
     def __init__(self, deck_amount):
         
@@ -51,7 +53,7 @@ class Deck():
         heart = "\u2665"
         
         self.cards = []
-        values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
+        values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
         
         for suits in [spade, diamond, heart, club]:
             for value in values:
@@ -79,7 +81,7 @@ class Card():
     
     def __init__(self, value, suit):
         self.name = value
-        self.value = self.card_dict[str(value)]
+        self.value = self.card_dict[value]
         self.suit = suit
 
     def show_card(self):
