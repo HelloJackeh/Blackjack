@@ -87,12 +87,6 @@ class Game():
         for player in self.players:
             self.clear_cards(player)
             player.reset_hand()
-
-        self.dealer.reset_ace()
-        
-        for player in self.players:
-            self.clear_cards(player)
-            player.reset_ace()
     
     def not_out(self, player):
         self.active_players.append(player)

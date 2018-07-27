@@ -28,7 +28,6 @@ class Ace():
             """
             if self.aces:
                 player.hand_value -= 10
-                player.value -= 10
                 self.aces.pop()
             else:
                 player.ace = False                
