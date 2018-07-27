@@ -69,7 +69,11 @@ class Player():
             self._blackjack = bj
         else:
             print("Can only set blackjack status to True or False.")
+<<<<<<< HEAD
             
+=======
+    
+>>>>>>> origin/master
     def bust(self, status):
         if (status is True or status is False):
             self.bust = status
@@ -93,6 +97,7 @@ class Player():
         
     @property
     def lose(self):
+<<<<<<< HEAD
         self._lose += 1        
 
     @property
@@ -101,6 +106,13 @@ class Player():
         
     def game_record(self):
         return self._win, self._lose, self._tie
+=======
+        self._lose += 1
+        
+    @property
+    def tie(self):
+        self._tie += 1
+>>>>>>> origin/master
     
     def draw(self, deck):
         """
@@ -130,8 +142,11 @@ class Player():
             card.show()
             
     def reset_hand(self):
+<<<<<<< HEAD
         self.bust = False
 
+=======
+>>>>>>> origin/master
         self.a.reset(self)
         self.hand_value = 0
         
@@ -141,3 +156,12 @@ class Player():
             value = value + card.value
         
         print("Your hand's value is: " + str(value))
+<<<<<<< HEAD
+=======
+        
+    def get_hand_value(self):
+        for card in self.hand:
+            self.value += card.value
+            
+        return self.value
+>>>>>>> origin/master

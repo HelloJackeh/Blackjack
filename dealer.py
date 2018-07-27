@@ -39,6 +39,14 @@ class Dealer(pl.Player):
             self.draw(self.deck)
             sleep(2) # mimics delay of actual card drawing
             print("Dealer drew: {}".format(self.last_card.show_card()))
+<<<<<<< HEAD
 
         if self.hand_value > 21:
             self.bust = True
+=======
+            
+        if dealer_cards > 21:
+            self.bust = True
+            
+    
+>>>>>>> origin/master
