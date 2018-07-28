@@ -21,7 +21,7 @@ class Shoe():
         for i in range(self.deck_amount):
             deck = Deck()
             deck.shuffle()
-            self.shoe.extend(deck.get_deck())
+            self.shoe += deck.get_deck()
     
     def remaining(self):
         return "\n" + str(len(self.shoe)) + " cards remaining in the shoe."

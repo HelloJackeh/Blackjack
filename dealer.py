@@ -27,18 +27,16 @@ class Dealer(pl.Player):
             
             for player in self.players:
                 player.draw(self.deck)
-                print("{} received {}".format(player.name, player.last_card_drawn()))
                     
         print ("Dealer's face up card: {}".format(self.hand[0].show_card()))
     
     def dealer_turn(self):
-        self.bust = None
+        self.bust = False
         
         # Stand on 17
         while self.hand_value < 17 and not self.has_blackjack:
             self.draw(self.deck)
-            sleep(2) # mimics delay of actual card drawing
-            print("Dealer drew: {}".format(self.last_card.show_card()))
+            #sleep(1) # mimics delay of actual card drawing
 
         if self.hand_value > 21:
             self.bust = True

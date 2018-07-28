@@ -1,17 +1,20 @@
 import ace
 from strategy import strategy as strat
-
+import bankroll as br
 
 class Player():
     """
     What can a player do?
     - Can draw cards from deck
+    - Has a bankroll
     - Show their hand
     - Get the value of cards in their hands
     - Can track it's wins and losses (TO-DO: incorpoate this with data analysis?)
     - Possibly analyze their chances of winning (via counting cards?, possibly something on TO-DO)
     """
     def __init__(self, name):
+        
+        self._bankroll = br.Bankroll(1000)
 
         self.strategy = strat.Strategy(self)
 
@@ -69,12 +72,6 @@ class Player():
             self._blackjack = bj
         else:
             print("Can only set blackjack status to True or False.")
-            
-    def bust(self, status):
-        if (status is True or status is False):
-            self.bust = status
-        else:
-            print("bust value can only be True or False.")
         
     def has_ace(self):
         return self.ace
@@ -131,7 +128,6 @@ class Player():
             
     def reset_hand(self):
         self.bust = False
-
         self.a.reset(self)
         self.hand_value = 0
         
