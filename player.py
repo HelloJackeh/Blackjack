@@ -1,6 +1,5 @@
 import ace
 from strategy import strategy as strat
-import bankroll as br
 
 class Player():
     """
@@ -14,7 +13,7 @@ class Player():
     """
     def __init__(self, name):
         
-        self._bankroll = br.Bankroll(1000)
+        # self._bankroll = br.Bankroll(1000)
 
         self.strategy = strat.Strategy(self)
 
@@ -85,8 +84,8 @@ class Player():
         self._bankroll = amount
         
     def bet(self, amount):
-        self._bankroll.balance -= amount
-    
+        self.bet_amount = amount
+
     @property
     def win(self):
         self._win += 1
@@ -133,6 +132,7 @@ class Player():
         self.bust = False
         self.a.reset(self)
         self.hand_value = 0
+        self.bet_amount = 0
         
     def value(self):
         value = 0

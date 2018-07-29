@@ -11,6 +11,9 @@ class Game():
         - Keep track of how many cards are in the shoe
         - Ensures the dealer knows who it's (players) playing with
         - Pay out bets
+        - Blackjack pays 3 to 2 (1.5x your original bet)
+        - Surrender returns half (0.5x) your bet back and marks a loss on the player's record
+    - TODO: Implement split logic, doubling after split(??)
     """
     
     def __init__(self, players, deck_amount, pen_amount):
@@ -35,19 +38,20 @@ class Game():
                 
     def confirm_players(self, players):
         self.dealer.add_players(players)
+
+    def spread_amount(self, amount):
+        self.spread = amount
         
     def set_deck_threshold(self):
         """
         If there are 6 players, when there are less than 30 cards before the next round, shoe is reshuffled
         """
         self.deck_threshold = 6 * 5
-        #self.deck_threshold = self.get_num_of_players() * 5
     
     def shuffle_shoe(self):
         self.decks.shoe += self.trash_pile
         self.trash_pile.clear()
         self.decks.shuffle()
-        #sleep(3)
         
     def remaining_cards(self):
         return int(len(self.decks) - self.pen)
@@ -66,22 +70,12 @@ class Game():
     def get_current_players(self):
         for player in self.players:
             print(player.name)
-            
-    def get_num_of_players(self):
-        count = 0
-        for player in self.players:
-            count += 1
-            
-        return count
         
     def clear_cards(self, player):
         for i in range(len(player.hand)):
             self.trash_pile.append(player.hand.pop())
                 
     def reset(self):
-        # handles clean up of player cards and removal of players in active_players list
-        self.active_players.clear()
-        
         # Discard cards from dealer and players at end of the round into trash_pile
         self.clear_cards(self.dealer)
         self.dealer.reset_hand()
@@ -89,39 +83,39 @@ class Game():
         for player in self.players:
             self.clear_cards(player)
             player.reset_hand()
-    
-    def not_out(self, player):
-        self.active_players.append(player)
         
     def decide_winner(self):
         dealer_hand = self.dealer.hand_value
         
-        # If active_players list has no players, everyone has busted.
-        for player in self.players:                
+        for player in self.players:
             player_hand = player.hand_value
-            
-            win, loss, tie = player.game_record()
-                
-            if player.bust:
+
+            if player.has_blackjack:
+                player.win
+                player.bankroll += player.bet_amount * 1.5
+                print("{} wins with blackjack in their hand.".format(player.name, player_hand))
+            elif player.bust:
                 player.lose
                 print("{} loses with {} in their hand.".format(player.name, player_hand))
             elif self.dealer.bust or player_hand > dealer_hand:
                 player.win
+                player.bankroll += player.bet_amount
                 print("{} wins with {} in their hand.".format(player.name, player_hand))
             elif player_hand < dealer_hand:
                 player.lose
+                player.bankroll -= player.bet_amount
                 print("{} loses with {} in their hand.".format(player.name, player_hand))
             else:
                 player.tie
                 print("{} ties with {} in their hand.".format(player.name, player_hand))
-                    
-            print("Record - W/L/T: {} {} {}".format(win, loss, tie))
+
+            win, loss, tie = player.game_record()
+            print("Record - W/L/T: {} {} {}, Bankroll: {:.2f}, Bet amount: {}".format(win, loss, tie, player.bankroll, player.bet_amount))
+            # sleep(1)
 
     def decision_round(self):
         self.dealer.deal_cards()
 
-        self.active_players = []
-        
         dealer_card = self.dealer.hand[0].name
         
         if dealer_card == 'J' or dealer_card == 'Q' or dealer_card == 'K':
@@ -130,13 +124,16 @@ class Game():
             dealer_face_up_card = str(self.dealer.hand[0].name)
         
         for player in self.players:
+            player.bet(self.spread)
             player.check_initial_hand()
+
             decision = None
 
             if player.has_blackjack:
                 continue
 
             while not player.bust:
+
                 if player.soft:
                     decision = player.strategy.soft_hand[player.hand_value][dealer_face_up_card]
                 elif player.split:
@@ -144,20 +141,18 @@ class Game():
                 else:
                     decision = player.strategy.hard_hand[player.hand_value][dealer_face_up_card]
 
-                if decision == 'H':
+                if decision == 'H': # hit
                     player.draw(self.decks)
-                elif decision == 'S':
+                elif decision == 'S': # stand
                     break
-                elif decision == 'Dh' or decision == 'Ds':
-                    #player.bet(2*betamount)
+                elif decision == 'Dh' or decision == 'Ds': # double
+                    player.bet_amount *= 2
                     player.draw(self.decks)
-                    print("suppose to double")
-                elif decision == 'P':
-                    #player.split_cards()
                     break
-                elif decision == 'Rh':
-                    #player.surrender()
-                    # return half of player bet
+                elif decision == 'P': # split cards
+                    break
+                elif decision == 'Rh': # surrender, otherwise hit
+                    player.bankroll -= (player.bet_amount / 2)
                     break
                 elif decision == 'Ph':
                     #We treat this as a hit instead of doubling after splitting for now
@@ -171,13 +166,14 @@ class Game():
 
         print("")
         self.dealer.dealer_turn()
-        self.dealer.show_hand()
+        # self.dealer.show_hand()
 
         print("\nDealer's hand count: {}".format(self.dealer.hand_value))
         # print("{}'s hand count: {}".format(self.players[0].get_name(), card_value))
 
         self.decide_winner()
-        print("\n{} cards remaining in the shoe.".format(self.remaining_cards()))
+
+        # print("\n{} cards remaining in the shoe.".format(self.remaining_cards()))
 
         self.reset()
         
@@ -199,14 +195,15 @@ def main():
         list_of_players.append(pl.Player(name + str(i)))
         
     g = Game(list_of_players, decks, shoe_penetration)
-    g.payroll_amount(300)
-    g.decision_round()
+    g.payroll_amount(150)
+    g.spread_amount(5)
     
     rounds = 0
     
-    while(rounds < 10000):
+    while(rounds < 100):
         g.decision_round()
         rounds += 1
+        print("Round: {}".format(rounds))
         
 if __name__ == '__main__':                
     main()
