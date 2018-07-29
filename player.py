@@ -83,6 +83,9 @@ class Player():
     @bankroll.setter
     def bankroll(self, amount):
         self._bankroll = amount
+        
+    def bet(self, amount):
+        self._bankroll.balance -= amount
     
     @property
     def win(self):

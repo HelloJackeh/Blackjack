@@ -32,10 +32,7 @@ class Game():
 
         # Average shoe penetration in Blackjack is usually 25% (0.25)
         self.pen = len(self.decks) * (pen_amount / 100)
-        #print ("{} cards are in the shoe after cut.".format(self.remaining_cards()))
-        
-        self.greet_message()
-        
+                
     def confirm_players(self, players):
         self.dealer.add_players(players)
         
@@ -149,7 +146,6 @@ class Game():
 
                 if decision == 'H':
                     player.draw(self.decks)
-                    print("{} chose to hit.".format(player.name))
                 elif decision == 'S':
                     break
                 elif decision == 'Dh' or decision == 'Ds':
@@ -158,17 +154,14 @@ class Game():
                     print("suppose to double")
                 elif decision == 'P':
                     #player.split_cards()
-                    print("split here")
                     break
                 elif decision == 'Rh':
                     #player.surrender()
                     # return half of player bet
-                    print("surrender if applicable")
                     break
                 elif decision == 'Ph':
                     #We treat this as a hit instead of doubling after splitting for now
                     player.draw(self.decks)
-                    print("draw")
                     
                 if player.hand_value > 21:
                     player.bust = True

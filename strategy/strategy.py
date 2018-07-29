@@ -36,26 +36,22 @@ class Strategy():
     def build_dict(self, file_name):
         strategy = {}
         start_number = self.get_start_number(file_name)
-
-        if file_name == "strategy/split_hand.csv":
-            with open(file_name, 'r') as csv_file:
-                reader = csv.DictReader(csv_file)
-                
-                for line in reader:
+        
+        with open(file_name, 'r') as csv_file:
+            reader = csv.DictReader(csv_file)
+            
+            for line in reader:
+                if not file_name == "strategy/split_hand.csv":
+                    strategy[start_number] = line
+                    start_number += 1
+                else:
                     if start_number == 5 or start_number == 10:
                         start_number += 1
                         strategy[start_number] = line
-
+                        
                     strategy[start_number] = line
                     start_number += 1
-        else:
-            with open(file_name, 'r') as csv_file:
-                reader = csv.DictReader(csv_file)
-
-                for line in reader:
-                    strategy[start_number] = line
-                    start_number += 1
-                
+                    
         return strategy
 
     def execute(self):
